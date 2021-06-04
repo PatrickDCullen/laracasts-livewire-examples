@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\User;
 use Illuminate\Http\Request;
 use App\Mail\ContactFormMailable;
 use Illuminate\Support\Facades\Mail;
@@ -17,18 +18,20 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('examples');
+    return view('examples', [
+        'users' => User::paginate(10),
+    ]);
 });
 
 Route::post('/contact', function (Request $request) {
-    // $contact = $request->validate([
-    //     'name' => 'required',
-    //     'email' => 'required|email',
-    //     'phone' => 'required',
-    //     'message' => 'required'
-    // ]);
+    $contact = $request->validate([
+        'name' => 'required',
+        'email' => 'required|email',
+        'phone' => 'required',
+        'message' => 'required'
+    ]);
 
-    // Mail::to('admin@admin.com')->send(new ContactFormMailable($contact));
+    Mail::to('admin@admin.com')->send(new ContactFormMailable($contact));
 
-    // return back()->with('success_message', 'We received your message successfully and will get back to you shortly!');
+    return back()->with('success_message', 'We received your message successfully and will get back to you shortly!');
 });
